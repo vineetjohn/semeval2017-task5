@@ -2,7 +2,7 @@ import json
 import gensim
 
 
-microblog_data_path = "/home/darkstar/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-1/Microblog_Trialdata-full.json"
+microblog_data_path = "/home/v2john/Dropbox/Personal/Academic/masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-1/Microblog_Trainingdata.json"
 
 with open(microblog_data_path, "r") as microblog_data_file:
     microblog_data = microblog_data_file.read()
@@ -15,20 +15,13 @@ all_posts = list()
 for sentence in blogpost_list:
     # print sentence["text"]
     try:
-        all_posts.append(sentence["text"])
-        continue
-    except Exception as e:
-        print json.dumps(sentence)
-
-    try:
-        all_posts.append(sentence["message"]["body"])
+        for span in sentence['spans']:
+            all_posts.append(span)
     except Exception as e:
         print json.dumps(sentence)
 
 
-print all_posts
+# print all_posts
+model = gensim.models.Doc2Vec(alpha=0.025, min_alpha=0.025, size=1000)
 
-
-
-
-model = gensim.models.Doc2Vec(documents=all_posts, size=300)
+model.build_vocab(all_posts)
