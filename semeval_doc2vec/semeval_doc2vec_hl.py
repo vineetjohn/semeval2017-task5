@@ -2,7 +2,7 @@ import json
 
 import gensim
 from gensim.models.doc2vec import TaggedDocument
-from sklearn import metrics
+from random import shuffle
 
 headlines_data_path = "/home/v2john/Dropbox/Personal/Academic/masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-2/Headline_Trainingdata.json"
 
@@ -50,6 +50,10 @@ for sentence in blogpost_list:
 model = gensim.models.Doc2Vec(alpha=0.025, min_alpha=0.025, max_vocab_size=None, size=1000, iter=20)
 model.build_vocab(all_posts)
 model.train(all_posts)
+
+for i in range(5):
+    shuffle(all_posts)
+    model.train(all_posts)
 
 # verify_sentiment('SENT_1000')
 
