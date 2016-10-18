@@ -1,97 +1,62 @@
-import pprint
-from time import time
+import json
+from sklearn import svm
+import numpy as np
+from random import shuffle
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import confusion_matrix
+import gensim
+from gensim.models.doc2vec import TaggedDocument
 
+headlines_data_path = "/home/v2john/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-2/Headline_Trainingdata.json"
+# headlines_data_path = "/home/darkstar/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-2/Headline_Trainingdata.json"
 
-# In[2]:
+with open(headlines_data_path, "r") as microblog_data_file:
+    microblog_data = microblog_data_file.read()
 
-def train_svm(X, y):
-    """
-    Create and train the Support Vector Machine.
-    """
-    svm = SzVC(C=1.0, gamma='auto', kernel='linear')
-    svm.fit(X, y)
-    return svm
+blogpost_list = json.loads(microblog_data)
 
-
-# In[3]:
-
-if __name__ == "__main__":
-    with open('/data/ovechtom/ovechtom/2016-Context-opinion/SVM/ambiguous_Adj/Jupyter-svm-test-dataset-ambigAdj.xml') as f:
-        test = [tuple(map(str, i.split('<ORIGINAL-REVIEW-SENTENCE>'))) for i in f]
-    with open('/data/ovechtom/ovechtom/2016-Context-opinion/SVM/ambiguous_Adj/all-training-Jupyter/Jupyter-svm-training.xml') as f:
-        train = [tuple(map(str, i.split('<ORIGINAL-REVIEW-SENTENCE>'))) for i in f]
+all_posts = list()
+tag_sentiment_scores = dict()
+sentence_count = 0
+sum_of_variance = 0
 
 
-# In[4]:
+for sentence in blogpost_list:
+    tag = 'SENT_' + str(sentence_count)
+    sentences = list()  # [sentence["cashtag"]]
+    try:
+        sentences.extend(sentence["title"].split())
+        tag_sentiment_scores[tag] = sentence["sentiment"]
+        lsentence = TaggedDocument(words=sentences, tags=[tag])
+        # print lsentence
+        all_posts.append(lsentence)
+    except Exception as e:
+        print json.dumps(sentence)
+        print e
+    sentence_count += 1
 
-# Create the training data class labels
-y_train = [d[0] for d in train]
-#pprint.pprint(y_train)
+# print all_posts
+model = gensim.models.Doc2Vec(alpha=0.025, min_alpha=0.025, max_vocab_size=None, size=100, iter=20)
+model.build_vocab(all_posts)
+model.train(all_posts)
 
-# Create the test data class labels
-y_test = [t[0] for t in test]
-#pprint.pprint(y_test)
+# for i in range(5):
+#     shuffle(all_posts)
+#     model.train(all_posts)
 
-# Create the training document corpus list
-train_corpus = [d[1] for d in train]
+# print model.docvecs["SENT_1"]
+# print tag_sentiment_scores["SENT_1"]
 
-# Create the test document corpus list
-test_corpus = [t[1] for t in test]
+x_docvecs = list()
+y_scores = list()
+for i in xrange(len(model.docvecs)):
+    tag = "SENT_" + str(i)
+    x_docvecs.append(model.docvecs[tag])
+    y_scores.append(int( (tag_sentiment_scores[tag] * 10) + 10))
 
-print("Extracting features from the training data using a sparse vectorizer")
-t0 = time()
-# Create the TF-IDF vectoriser
-vectorizer = TfidfVectorizer(min_df=1, max_features=1000)
+# print [y-10 for y in y_scores]
 
-#Transform the training corpus
-X_train = vectorizer.fit_transform(train_corpus)
+svm_classifier = svm.LinearSVC(C=5.0)
+svm_classifier.fit(X=x_docvecs, y=y_scores)
 
-duration = time() - t0
-#print("done in %fs at %0.3fMB/s" % (duration, data_train_size_mb / duration))
-print("n_samples: %d, n_features: %d" % X_train.shape)
-print()
-
-#Transform the test corpus
-print("Extracting features from the test data using the same vectorizer")
-t0 = time()
-X_test = vectorizer.transform(test_corpus)
-duration = time() - t0
-#print("done in %fs at %0.3fMB/s" % (duration, data_test_size_mb / duration))
-print("n_samples: %d, n_features: %d" % X_test.shape)
-print()
-
-
-# In[5]:
-
-classifier = LogisticRegression()
-classifier.fit(X_train, y_train)
-
-pred = classifier.predict(X_test)
-#print(accuracy_score(y_test, pred))
-print('LogisticRegression score: %f'
-  % classifier.fit(X_train, y_train).score(X_test, y_test))
-print(confusion_matrix(pred, y_test))
-
-
-# In[6]:
-
-# Create and train the Support Vector Machine
-svm = train_svm(X_train, y_train)
-
-
-# In[7]:
-
-# Make an array of predictions on the test set
-pred = svm.predict(X_test)
-pprint.pprint(pred)
-
-
-# In[8]:
-
-# Output the hit-rate and the confusion matrix for each model
-print(svm.score(X_test, y_test))
-print(confusion_matrix(pred, y_test))
+for i in xrange(30):
+    print (svm_classifier.predict(np.array(x_docvecs[i]).reshape(1, -1))[0] - 10, y_scores[i] - 10)
