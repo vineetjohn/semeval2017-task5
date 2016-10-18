@@ -1,19 +1,9 @@
 import pprint
-import re
-import json
-
-import numpy as np
-
-from sklearn import linear_model, decomposition, datasets
-
-from sklearn.linear_model import LogisticRegression
-from sklearn.cross_validation import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import confusion_matrix
-from sklearn.svm import SVC
-import logging
-import sys
 from time import time
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix
 
 
 # In[2]:
@@ -22,7 +12,7 @@ def train_svm(X, y):
     """
     Create and train the Support Vector Machine.
     """
-    svm = SVC(C=1.0, gamma='auto', kernel='linear')
+    svm = SzVC(C=1.0, gamma='auto', kernel='linear')
     svm.fit(X, y)
     return svm
 

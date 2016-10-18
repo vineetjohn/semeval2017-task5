@@ -2,11 +2,11 @@ import json
 
 import gensim
 from gensim.models.doc2vec import TaggedDocument
-from sklearn import metrics
 
 # microblog_data_path = "/home/v2john/Dropbox/Personal/Academic/masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-1/Microblog_Trainingdata.json"
-microblog_data_path = "/home/v2john/Dropbox/Personal/Academic/masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-1/combined.json"
+# microblog_data_path = "/home/v2john/Dropbox/Personal/Academic/masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-1/combined.json"
 # microblog_data_path = "/home/darkstar/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-1/Microblog_Trainingdata.json"
+microblog_data_path = "/home/darkstar/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-1/combined.json"
 
 with open(microblog_data_path, "r") as microblog_data_file:
     microblog_data = microblog_data_file.read()

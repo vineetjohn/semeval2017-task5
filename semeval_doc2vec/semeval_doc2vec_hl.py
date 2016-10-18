@@ -1,10 +1,11 @@
 import json
+from random import shuffle
 
 import gensim
 from gensim.models.doc2vec import TaggedDocument
-from random import shuffle
 
-headlines_data_path = "/home/v2john/Dropbox/Personal/Academic/masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-2/Headline_Trainingdata.json"
+# headlines_data_path = "/home/v2john/Dropbox/Personal/Academic/masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-2/Headline_Trainingdata.json"
+headlines_data_path = "/home/darkstar/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-2/Headline_Trainingdata.json"
 
 with open(headlines_data_path, "r") as microblog_data_file:
     microblog_data = microblog_data_file.read()
