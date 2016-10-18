@@ -37,11 +37,11 @@ for sentence in blogpost_list:
     sentence_count += 1
 
 # print all_posts
-model = Doc2Vec(alpha=0.025, min_alpha=0.025, max_vocab_size=None, size=500, iter=50)
+model = Doc2Vec(min_count=1, size=1000, iter=20)
 model.build_vocab(all_posts)
 model.train(all_posts)
 
-for i in range(10):
+for i in range(100):
     shuffle(all_posts)
     model.train(all_posts)
 
