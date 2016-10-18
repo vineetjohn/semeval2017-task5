@@ -1,12 +1,14 @@
 import json
-from sklearn import svm
-import numpy as np
 from random import shuffle
 
-import gensim
+import numpy as np
+from gensim.models import Doc2Vec
 from gensim.models.doc2vec import TaggedDocument
+from sklearn import svm
 
-headlines_data_path = "/home/v2john/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-2/Headline_Trainingdata.json"
+import utils.evaluation_helper as evaluation_helper
+
+headlines_data_path = "/home/v2john/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-2/combined.json"
 # headlines_data_path = "/home/darkstar/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-2/Headline_Trainingdata.json"
 
 with open(headlines_data_path, "r") as microblog_data_file:
@@ -35,28 +37,39 @@ for sentence in blogpost_list:
     sentence_count += 1
 
 # print all_posts
-model = gensim.models.Doc2Vec(alpha=0.025, min_alpha=0.025, max_vocab_size=None, size=100, iter=20)
+model = Doc2Vec(alpha=0.025, min_alpha=0.025, max_vocab_size=None, size=500, iter=50)
 model.build_vocab(all_posts)
 model.train(all_posts)
 
-# for i in range(5):
-#     shuffle(all_posts)
-#     model.train(all_posts)
-
-# print model.docvecs["SENT_1"]
-# print tag_sentiment_scores["SENT_1"]
+for i in range(10):
+    shuffle(all_posts)
+    model.train(all_posts)
 
 x_docvecs = list()
 y_scores = list()
 for i in xrange(len(model.docvecs)):
     tag = "SENT_" + str(i)
     x_docvecs.append(model.docvecs[tag])
-    y_scores.append(int( (tag_sentiment_scores[tag] * 10) + 10))
+    y_scores.append(tag_sentiment_scores[tag])
 
 # print [y-10 for y in y_scores]
 
-svm_classifier = svm.LinearSVC(C=5.0)
+svm_classifier = svm.LinearSVR()
 svm_classifier.fit(X=x_docvecs, y=y_scores)
 
-for i in xrange(30):
-    print (svm_classifier.predict(np.array(x_docvecs[i]).reshape(1, -1))[0] - 10, y_scores[i] - 10)
+predicted_scores = list()
+actual_scores = list()
+
+for i in xrange(len(y_scores) - 15, len(y_scores)):
+    predicted_score = round(svm_classifier.predict(np.array(x_docvecs[i]).reshape(1, -1))[0], 2)
+    actual_score = y_scores[i]
+
+    predicted_scores.append(predicted_score)
+    actual_scores.append(actual_score)
+
+    print blogpost_list[i]
+    print (predicted_score, actual_score, abs(round((predicted_score - y_scores[i]), 2)))
+
+evaluation_helper.evaluate_task_score(predicted_scores, actual_scores)
+
+# print len(y_scores)
