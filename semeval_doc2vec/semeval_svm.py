@@ -37,7 +37,7 @@ for sentence in blogpost_list:
     sentence_count += 1
 
 # print all_posts
-model = Doc2Vec(min_count=1, size=1000, iter=20)
+model = Doc2Vec(min_count=1, size=1000, iter=20, dm=0)
 model.build_vocab(all_posts)
 model.train(all_posts)
 
@@ -47,7 +47,7 @@ for i in range(100):
 
 x_docvecs = list()
 y_scores = list()
-for i in xrange(len(model.docvecs)):
+for i in xrange(len(model.docvecs) - 15):
     tag = "SENT_" + str(i)
     x_docvecs.append(model.docvecs[tag])
     y_scores.append(tag_sentiment_scores[tag])
