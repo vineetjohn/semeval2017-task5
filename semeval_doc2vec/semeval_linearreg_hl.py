@@ -23,7 +23,7 @@ all_posts = list()
 tag_sentiment_scores = dict()
 sentence_count = 0
 sum_of_variance = 0
-shuffle_count = 100
+shuffle_count = 0
 
 # This is to convert the headlines into the input data type for doc2vec
 for sentence in blogpost_list:
@@ -42,7 +42,7 @@ for sentence in blogpost_list:
 
 # model training
 print "Training the doc2vec model ..."
-model = Doc2Vec(min_count=1, size=1000, iter=20, dm=0)
+model = Doc2Vec(min_count=2, size=1000, iter=50, dm=0)
 model.build_vocab(all_posts)
 model.train(all_posts)
 
