@@ -24,8 +24,10 @@ def parse_args(argv):
     :return:
     """
     parser = ArgumentParser(prog="semeval2015-task5")
-    parser.add_argument('--train_headlines_data_path', metavar='Training Headlines File Path', type=str)
-    parser.add_argument('--test_headlines_data_path', metavar='Test Headlines File Path', type=int)
+    parser.add_argument('--train_headlines_data_path', metavar='Training Headlines File Path',
+                        type=str, required=True)
+    parser.add_argument('--test_headlines_data_path', metavar='Test Headlines File Path',
+                        type=str, required=True)
 
     return parser.parse_args(argv, namespace=Options)
 
