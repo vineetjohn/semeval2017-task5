@@ -3,6 +3,7 @@ from random import shuffle
 
 import gensim
 from gensim.models.doc2vec import TaggedDocument
+
 import utils.evaluation_helper as evaluation_helper
 
 headlines_data_path = "/home/v2john/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-2/Headline_Trainingdata.json"

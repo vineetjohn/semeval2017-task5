@@ -4,7 +4,8 @@ from random import shuffle
 import numpy as np
 from gensim.models import Doc2Vec
 from gensim.models.doc2vec import TaggedDocument
-from sklearn import svm, linear_model
+from sklearn import linear_model
+from sklearn.model_selection import KFold
 
 import utils.evaluation_helper as evaluation_helper
 
@@ -53,38 +54,34 @@ for i in range(shuffle_count):
     model.train(all_posts)
 print "Doc2Vec model trained successfully"
 
-# arranging input and output vectors for regression model training
-x_docvecs = list()
-y_scores = list()
-for i in xrange(len(model.docvecs) - 15):
-    tag = "SENT_" + str(i)
-    x_docvecs.append(model.docvecs[tag])
-    y_scores.append(tag_sentiment_scores[tag])
+print len(model.docvecs)
+y_values = np.asarray(tag_sentiment_scores.values())
+print len(y_values)
 
-print "Training the prediction model"
-# training the svm regression model
-# svm_classifier = svm.LinearSVR()
-# svm_classifier.fit(X=x_docvecs, y=y_scores)
+# using tenfold cross-validation
 
-# training the linear regression model
-regr = linear_model.LinearRegression()
-regr.fit(X=x_docvecs, y=y_scores)
-print "Prediction model trained successfully"
+kf = KFold(n_splits=10)
+kf.get_n_splits(model.docvecs)
 
-predicted_scores = list()
-actual_scores = list()
+for train_index, test_index in kf.split(model.docvecs):
 
-# making the predictions
-for i in xrange(len(model.docvecs) - 15, len(model.docvecs)):
-    tag = "SENT_" + str(i)
-    predicted_score = round(regr.predict(np.array(model.docvecs[tag]).reshape(1, -1))[0], 2)
-    actual_score = tag_sentiment_scores[tag]
+    X_train, X_test = model.docvecs[train_index], model.docvecs[test_index]
+    y_train, y_test = y_values[train_index], y_values[test_index]
 
-    predicted_scores.append(predicted_score)
-    actual_scores.append(actual_score)
+    print "Training the prediction model"
 
-    print blogpost_list[i]
-    print (predicted_score, actual_score, abs(round((predicted_score - actual_score), 2)))
+    # training the svm regression model
+    # svm_classifier = svm.LinearSVR()
+    # svm_classifier.fit(X=x_docvecs, y=y_scores)
 
-# evaluating the accuracy
-evaluation_helper.evaluate_task_score(predicted_scores, actual_scores)
+    # training the linear regression model
+    regr = linear_model.LinearRegression()
+    regr.fit(X=X_train, y=y_train)
+    print "Prediction model trained successfully"
+
+    # making the predictions
+
+    y_predict = regr.predict(X=X_test)
+
+    # evaluating the accuracy
+    evaluation_helper.evaluate_task_score(y_predict, y_test)
