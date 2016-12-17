@@ -38,7 +38,7 @@ class DocvecProcessor(Processor):
         y_pred = linear_regression_model.predict(x_test)
 
         for i in xrange(len(y_pred)):
-            log.debug("Predicted: " + str(y_pred[i]) + " - Actual: " + str(y_true[i]))
+            log.info("Predicted: " + str(y_pred[i]) + " - Actual: " + str(y_true[i]))
 
         log.info("R^2 score: " + str(metrics.r2_score(y_true, y_pred)))
 
