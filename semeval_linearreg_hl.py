@@ -9,9 +9,8 @@ from sklearn import linear_model
 import utils.evaluation_helper as evaluation_helper
 
 # input file in the semeval format
-# headlines_data_path = "/home/v2john/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject/semeval_task/semeval-2017-task-5-subtask-2/combined.json"
 headlines_data_path = \
-    "/home/v2john/Dropbox/Personal/Academic/Masters/UWaterloo/Academics/ResearchProject" + \
+    "/home/v2john/Dropbox/Personal/Academic/Masters/UWaterloo/ResearchProject" + \
     "/semeval_task/semeval-2017-task-5-subtask-2/Headline_Trainingdata.json"
 
 
