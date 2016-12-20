@@ -28,13 +28,9 @@ def parse_args(argv):
                         type=str, required=True)
     parser.add_argument('--test_headlines_data_path', metavar='Test Headlines File Path',
                         type=str, required=True)
-    parser.add_argument('--min_dimension_size', metavar='Minimun Dimensions for Doc2Vec',
+    parser.add_argument('--docvec_dimension_size', metavar='Dimensions for Doc2Vec',
                         type=int)
-    parser.add_argument('--max_dimension_size', metavar='Maximum Dimensions for Doc2Vec',
-                        type=int)
-    parser.add_argument('--min_docvec_iter', metavar='Minimun Iterations for Doc2Vec',
-                        type=int)
-    parser.add_argument('--max_docvec_iter', metavar='Maximum Dimensions for Doc2Vec',
+    parser.add_argument('--docvec_iteration_count', metavar='Iterations for Doc2Vec',
                         type=int)
     parser.add_argument('--results_file', metavar='File to post results to',
                         type=str, required=True)
