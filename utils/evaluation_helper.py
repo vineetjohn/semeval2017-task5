@@ -21,7 +21,7 @@ def evaluate_task_score(predicted_score_vector, gold_standard_vector):
         cosine_similarity(np.array(predicted_score_vector).reshape(1, -1),
                           np.array(gold_standard_vector).reshape(1, -1))[0][0]
 
-    log.info("\n\ncosine_weight " + str(cosine_weight))
+    log.info("cosine_weight " + str(cosine_weight))
     log.info("cosine_similarity " + str(cosine_smty))
 
     final_cosine_score = cosine_weight * cosine_smty
