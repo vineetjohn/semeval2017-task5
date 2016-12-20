@@ -21,6 +21,7 @@ class DocvecProcessor(Processor):
         semeval_train_docs = SemevalTaggedLineDocument(self.options.train_headlines_data_path)
 
         results_file = open(self.options.results_file, 'w')
+        results_file.close()
 
         for dimension_size in xrange(self.options.min_dimension_size, self.options.max_dimension_size + 1):
             for iteration_count in xrange(self.options.min_docvec_iter, self.options.max_docvec_iter + 1):
@@ -52,7 +53,7 @@ class DocvecProcessor(Processor):
                 test_result_dict['r2_score'] = metrics.r2_score(y_true, y_pred)
                 test_result_dict['semeval_score'] = evaluation_helper.evaluate_task_score(y_pred, y_true)
 
-                results_file.write(str(json.dumps(test_result_dict)) + "\n")
+                with open(self.options.results_file, 'a') as results_file:
+                    results_file.write(str(json.dumps(test_result_dict)) + "\n")
 
-        results_file.close()
         log.info("Completed Processing")
