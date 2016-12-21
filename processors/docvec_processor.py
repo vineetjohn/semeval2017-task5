@@ -45,6 +45,9 @@ class DocvecProcessor(Processor):
 
         y_pred = linear_regression_model.predict(x_test)
 
+        # for i in xrange(len(gold_standard_vector)):
+        #     log.debug("Predicted: " + str(y_pred[i]) + " : " + str(y_true[i]) + ": Actual")
+
         test_result_dict = dict()
         test_result_dict['dimension_size'] = self.options.docvec_dimension_size
         test_result_dict['iteration_count'] = self.options.docvec_iteration_count
