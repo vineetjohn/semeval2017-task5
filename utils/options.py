@@ -1,5 +1,6 @@
 class Options(object):
     train_headlines_data_path = None
+    fpb_sentences_file_path = None
     test_headlines_data_path = None
     results_file = None
     docvec_dimension_size = None
