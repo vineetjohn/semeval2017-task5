@@ -34,7 +34,7 @@ class DocvecProcessor(Processor):
             x_vector = doc2vec_model.infer_vector(article)
             x_train.append(x_vector)
 
-        linear_regression_model = ml_helper.train_linear_model(x_train, y_train)
+        linear_regression_model = ml_helper.train_linear_regressor(x_train, y_train)
 
         x_test_articles, y_true = file_helper.get_article_details(self.options.test_headlines_data_path)
 

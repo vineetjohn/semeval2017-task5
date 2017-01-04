@@ -2,9 +2,10 @@ import pandas as pd
 
 from sklearn import linear_model, svm
 from sklearn.externals import joblib
+from sklearn.naive_bayes import GaussianNB
 
 
-def train_linear_model(x, y):
+def train_linear_regressor(x, y):
 
     linear_reg_model = linear_model.LinearRegression()
     linear_reg_model.fit(x, y)
@@ -18,6 +19,14 @@ def train_svm_regressor(x, y):
     svm_regressor.fit(x, y)
 
     return svm_regressor
+
+
+def train_gnb_classifier(x, y):
+
+    gnb_classifier = GaussianNB()
+    gnb_classifier.fit(x, y)
+
+    return gnb_classifier
 
 
 def persist_model_to_disk(model, model_path):

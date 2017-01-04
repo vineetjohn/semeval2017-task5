@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 
 import sys
 
+from processors.bigram_processor import BigramProcessor
 from processors.docvec_processor import DocvecProcessor
 from processors.docvec_processor_crossval import DocvecProcessorCrossval
 from utils.options import Options
@@ -14,7 +15,7 @@ def main(argv):
     :return: null
     """
     options = parse_args(argv)
-    processor = DocvecProcessorCrossval(options)
+    processor = BigramProcessor(options)
     processor.process()
 
 

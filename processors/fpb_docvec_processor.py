@@ -33,7 +33,7 @@ class FPBDocvecProcessor(Processor):
             x_train.append(x_vector)
 
         log.info("Training ML model")
-        linear_regression_model = ml_helper.train_linear_model(x_train, label_list)
+        linear_regression_model = ml_helper.train_linear_regressor(x_train, label_list)
 
         log.info("Predicting test set")
         x_test_articles, y_true = file_helper.get_article_details(self.options.test_headlines_data_path)
