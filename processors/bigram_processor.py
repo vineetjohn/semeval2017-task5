@@ -6,7 +6,8 @@ from utils import file_helper
 from utils import log_helper
 
 log = log_helper.get_logger("BigramProcessor")
-
+min_ngram_range = xrange(1, 11)
+max_ngram_range = xrange(1, 11)
 
 class BigramProcessor(Processor):
 
@@ -20,15 +21,30 @@ class BigramProcessor(Processor):
         x_train_articles.extend(x_test_articles)
         y_train.extend(y_test)
 
-        log.info("Vectorizing articles")
-        vectorizer = CountVectorizer(ngram_range=(1,10))
-        x_vectors = vectorizer.fit_transform(x_train_articles)
+        max_score = 0
+        best_config_tuple = (0, 0)
 
-        log.info("Testing Prediction model")
-        scores = model_selection.cross_val_score(linear_model.LinearRegression(), x_vectors,
-                                                 y_train, cv=10, scoring='r2')
+        for x in min_ngram_range:
+            for y in max_ngram_range:
+                try:
+                    log.info("Vectorizing articles")
+                    vectorizer = CountVectorizer(ngram_range=(x,y))
+                    x_vectors = vectorizer.fit_transform(x_train_articles)
 
-        log.info(scores)
-        log.info("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+                    log.info("Testing Prediction model")
+                    scores = model_selection.cross_val_score(linear_model.LinearRegression(), x_vectors,
+                                                             y_train, cv=10, scoring='r2')
+
+                    mean_score = scores.mean()
+                    if mean_score > max_score:
+                        max_score = mean_score
+                        best_config_tuple = (x, y)
+
+                    log.info("Accuracy: %0.2f (+/- %0.2f)" % (mean_score, scores.std() * 2))
+                except ValueError:
+                    log.error("Value error for ngram config (" + str(x) + ", " + str(y) + ")")
+
+        log.info("Best score is " + str(max_score))
+        log.info("Best ngrams(min, max): " + str(best_config_tuple))
 
         log.info("Completed Processing")
