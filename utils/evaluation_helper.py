@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
-import log_helper
+from utils import log_helper
 
 log = log_helper.get_logger("EvaluationHelper")
 

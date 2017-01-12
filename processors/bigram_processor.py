@@ -6,8 +6,9 @@ from utils import file_helper
 from utils import log_helper
 
 log = log_helper.get_logger("BigramProcessor")
-min_ngram_range = xrange(1, 11)
-max_ngram_range = xrange(1, 11)
+min_ngram_range = range(1, 11)
+max_ngram_range = range(1, 11)
+
 
 class BigramProcessor(Processor):
 
