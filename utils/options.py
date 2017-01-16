@@ -5,3 +5,7 @@ class Options(object):
     results_file = None
     docvec_dimension_size = None
     docvec_iteration_count = None
+    validate = None
+    annotate = None
+    max_ngram = None
+    min_ngram = None
