@@ -1,8 +1,10 @@
 import pandas as pd
+import xgboost as xgb
 
 from sklearn import linear_model, svm
 from sklearn.externals import joblib
 from sklearn.naive_bayes import GaussianNB
+from xgboost import XGBRegressor
 
 
 def train_linear_regressor(x, y):
@@ -27,6 +29,14 @@ def train_gnb_classifier(x, y):
     gnb_classifier.fit(x, y)
 
     return gnb_classifier
+
+
+def train_xgboost_regressor(x, y):
+
+    xgbooster = XGBRegressor()
+    xgbooster.fit(x, y)
+
+    return xgbooster
 
 
 def persist_model_to_disk(model, model_path):

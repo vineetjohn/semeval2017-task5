@@ -1,9 +1,11 @@
 from sklearn import model_selection, linear_model
 from sklearn.feature_extraction.text import CountVectorizer
+import xgboost as xgb
 
 from processors.processor import Processor
 from utils import file_helper
 from utils import log_helper
+from utils.ml_helper import train_xgboost
 
 log = log_helper.get_logger("BigramProcessor")
 min_ngram_range = range(1, 11)
@@ -56,7 +58,6 @@ class BigramProcessor(Processor):
 
             log.info("Extracting articles and scores")
             x_train_articles.extend(x_test_articles)
-            # y_train.extend(y_test)
 
             log.info("Vectorizing articles")
             vectorizer = CountVectorizer(ngram_range=(self.options.min_ngram, self.options.max_ngram))
@@ -65,8 +66,11 @@ class BigramProcessor(Processor):
             x_train_vectors = x_vectors[:-len(x_test_articles)]
             model = linear_model.LinearRegression()
             model.fit(x_train_vectors, y_train)
-            y_test = model.predict(x_vectors[-len(x_test_articles):])
 
+            x_test = x_vectors[-len(x_test_articles):]
+            y_test = model.predict(X=x_test).tolist()
+
+            log.info("Annotating test set")
             file_helper.annotate_test_set(self.options.test_headlines_data_path, y_test)
 
         else:

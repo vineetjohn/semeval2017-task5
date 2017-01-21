@@ -35,7 +35,7 @@ def parse_args(argv):
     parser.add_argument('--docvec_iteration_count', metavar='Iterations for Doc2Vec',
                         type=int, required=False)
     parser.add_argument('--results_file', metavar='File to post results to',
-                        type=str, required=True)
+                        type=str, required=False)
     parser.add_argument('--validate', metavar='Mode: validate',
                         type=bool, required=False)
     parser.add_argument('--annotate', metavar='Mode: annotate',

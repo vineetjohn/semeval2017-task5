@@ -22,7 +22,7 @@ def get_article_details(articles_file_path):
     for semeval_article in semeval_articles:
         if "sentiment" in semeval_article.keys():
             sentiment_scores.append(semeval_article['sentiment'])
-        articles.append(semeval_article['title'])
+        articles.append(semeval_article['title'].replace(semeval_article['company'], "Umbrella Corp"))
 
     return articles, sentiment_scores
 
@@ -33,7 +33,14 @@ def annotate_test_set(test_headlines_data_path, y_test):
         articles = json.load(test_headlines_file)
 
         for i in range(len(y_test)):
-            articles[i]["sentiment"] = y_test[i]
+            sentiment_score = round(y_test[i], 3)
+
+            if sentiment_score > 1:
+                sentiment_score = 1
+            elif sentiment_score < -1:
+                sentiment_score = -1
+
+            articles[i]["sentiment"] = sentiment_score
 
     with open(test_headlines_data_path, 'w') as test_headlines_file:
         json.dump(articles, test_headlines_file, indent=4, separators=(',', ': '))
