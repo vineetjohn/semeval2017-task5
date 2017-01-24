@@ -5,7 +5,7 @@ import xgboost as xgb
 from processors.processor import Processor
 from utils import file_helper
 from utils import log_helper
-from utils.ml_helper import train_xgboost
+from utils.ml_helper import train_xgboost_regressor
 
 log = log_helper.get_logger("BigramProcessor")
 min_ngram_range = range(1, 11)

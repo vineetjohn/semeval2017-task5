@@ -15,7 +15,7 @@ def main(argv):
     :return: null
     """
     options = parse_args(argv)
-    processor = BigramProcessor(options)
+    processor = DocvecProcessor(options)
     processor.process()
 
 

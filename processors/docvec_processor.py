@@ -18,43 +18,75 @@ class DocvecProcessor(Processor):
     def process(self):
         log.info("Began Processing")
 
-        semeval_train_docs = SemevalTaggedLineDocument(self.options.train_headlines_data_path)
+        if self.options.validate:
+            semeval_train_docs = SemevalTaggedLineDocument(self.options.train_headlines_data_path)
 
-        doc2vec_model = \
-            doc2vec_helper.init_model(
-                semeval_train_docs, self.options.docvec_dimension_size, self.options.docvec_iteration_count
-            )
-        log.info("Doc2vec model initialized with " + str(self.options.docvec_dimension_size) +
-                 " dimensions and " + str(self.options.docvec_iteration_count) + " iterations")
+            doc2vec_model = \
+                doc2vec_helper.init_model(
+                    semeval_train_docs, self.options.docvec_dimension_size, self.options.docvec_iteration_count
+                )
+            log.info("Doc2vec model initialized with " + str(self.options.docvec_dimension_size) +
+                     " dimensions and " + str(self.options.docvec_iteration_count) + " iterations")
 
-        x_articles, y_train = file_helper.get_article_details(self.options.train_headlines_data_path)
+            x_articles, y_train = file_helper.get_article_details(self.options.train_headlines_data_path)
 
-        x_train = list()
-        for article in x_articles:
-            x_vector = doc2vec_model.infer_vector(article)
-            x_train.append(x_vector)
+            x_train = list()
+            for article in x_articles:
+                x_vector = doc2vec_model.infer_vector(article)
+                x_train.append(x_vector)
 
-        linear_regression_model = ml_helper.train_linear_regressor(x_train, y_train)
+            linear_regression_model = ml_helper.train_linear_regressor(x_train, y_train)
 
-        x_test_articles, y_true = file_helper.get_article_details(self.options.test_headlines_data_path)
+            x_test_articles, y_true = file_helper.get_article_details(self.options.test_headlines_data_path)
 
-        x_test = list()
-        for article in x_test_articles:
-            x_vector = doc2vec_model.infer_vector(article)
-            x_test.append(x_vector)
+            x_test = list()
+            for article in x_test_articles:
+                x_vector = doc2vec_model.infer_vector(article)
+                x_test.append(x_vector)
 
-        y_pred = linear_regression_model.predict(x_test)
+            y_pred = linear_regression_model.predict(x_test)
 
-        # for i in xrange(len(gold_standard_vector)):
-        #     log.debug("Predicted: " + str(y_pred[i]) + " : " + str(y_true[i]) + ": Actual")
+            test_result_dict = dict()
+            test_result_dict['dimension_size'] = self.options.docvec_dimension_size
+            test_result_dict['iteration_count'] = self.options.docvec_iteration_count
+            test_result_dict['r2_score'] = metrics.r2_score(y_true, y_pred)
+            test_result_dict['semeval_score'] = evaluation_helper.evaluate_task_score(y_pred, y_true)
 
-        test_result_dict = dict()
-        test_result_dict['dimension_size'] = self.options.docvec_dimension_size
-        test_result_dict['iteration_count'] = self.options.docvec_iteration_count
-        test_result_dict['r2_score'] = metrics.r2_score(y_true, y_pred)
-        test_result_dict['semeval_score'] = evaluation_helper.evaluate_task_score(y_pred, y_true)
+            with open(self.options.results_file, 'a') as results_file:
+                results_file.write(str(json.dumps(test_result_dict)) + "\n")
 
-        with open(self.options.results_file, 'a') as results_file:
-            results_file.write(str(json.dumps(test_result_dict)) + "\n")
+        elif self.options.annotate:
+            semeval_train_docs = SemevalTaggedLineDocument(self.options.train_headlines_data_path)
+
+            doc2vec_model = \
+                doc2vec_helper.init_model(
+                    semeval_train_docs, self.options.docvec_dimension_size, self.options.docvec_iteration_count
+                )
+            log.info("Doc2vec model initialized with " + str(self.options.docvec_dimension_size) +
+                     " dimensions and " + str(self.options.docvec_iteration_count) + " iterations")
+
+            x_articles, y_train = file_helper.get_article_details(self.options.train_headlines_data_path)
+
+            x_train = list()
+            for article in x_articles:
+                x_vector = doc2vec_model.infer_vector(article)
+                x_train.append(x_vector)
+
+            linear_regression_model = ml_helper.train_linear_regressor(x_train, y_train)
+
+            x_test_articles, y_true = file_helper.get_article_details(self.options.test_headlines_data_path)
+
+            x_test = list()
+            for article in x_test_articles:
+                x_vector = doc2vec_model.infer_vector(article)
+                x_test.append(x_vector)
+
+            y_pred = linear_regression_model.predict(x_test)
+
+            log.info("Annotating test set")
+            file_helper.annotate_test_set(self.options.test_headlines_data_path, y_pred)
+
+        else:
+            raise RuntimeError("Invalid run mode. Valid modes are 'validate' and 'annotate'")
 
         log.info("Completed Processing")
