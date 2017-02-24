@@ -1,4 +1,5 @@
 from sklearn import model_selection, linear_model
+from xgboost import XGBRegressor
 
 from entities.semeval_tagged_line_document import SemevalTaggedLineDocument
 from processors.processor import Processor
@@ -39,7 +40,7 @@ class DocvecProcessorCrossval(Processor):
 
         x_train.extend(x_test)
         y_train.extend(y_true)
-        scores = model_selection.cross_val_score(linear_model.LinearRegression(), x_train,
+        scores = model_selection.cross_val_score(XGBRegressor(), x_train,
                                                  y_train, cv=10, scoring='r2')
 
         log.info("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))

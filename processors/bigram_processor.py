@@ -8,8 +8,8 @@ from utils import log_helper
 from utils.ml_helper import train_xgboost_regressor
 
 log = log_helper.get_logger("BigramProcessor")
-min_ngram_range = range(1, 11)
-max_ngram_range = range(1, 11)
+min_ngram_range = range(1, 3)
+max_ngram_range = range(1, 3)
 
 
 class BigramProcessor(Processor):
