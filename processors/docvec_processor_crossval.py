@@ -1,4 +1,5 @@
-from sklearn import model_selection, linear_model
+from sklearn import model_selection, linear_model, svm
+from sklearn.metrics import make_scorer
 from xgboost import XGBRegressor
 
 from entities.semeval_tagged_line_document import SemevalTaggedLineDocument
@@ -6,6 +7,7 @@ from processors.processor import Processor
 from utils import doc2vec_helper
 from utils import file_helper
 from utils import log_helper
+from utils.evaluation_helper import evaluate_task_score
 
 log = log_helper.get_logger("DocvecProcessorCrossval")
 
@@ -32,6 +34,7 @@ class DocvecProcessorCrossval(Processor):
             x_train.append(x_vector)
 
         x_test_articles, y_true = file_helper.get_article_details(self.options.test_headlines_data_path)
+        custom_scorer = make_scorer(evaluate_task_score)
 
         x_test = list()
         for article in x_test_articles:
@@ -40,8 +43,8 @@ class DocvecProcessorCrossval(Processor):
 
         x_train.extend(x_test)
         y_train.extend(y_true)
-        scores = model_selection.cross_val_score(XGBRegressor(), x_train,
-                                                 y_train, cv=10, scoring='r2')
+        scores = model_selection.cross_val_score(svm.LinearSVR(), x_train,
+                                                 y_train, cv=10, scoring=custom_scorer)
 
         log.info("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 

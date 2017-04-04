@@ -16,7 +16,7 @@ def main(argv):
     :return: null
     """
     options = parse_args(argv)
-    processor = TFIDFProcessor(options)
+    processor = DocvecProcessorCrossval(options)
     processor.process()
 
 
